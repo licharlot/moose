@@ -7,15 +7,17 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "ADWallHeatTransferCoefficient3EqnDittusBoelterMaterial.h"
+#include "ADWallHeatTransferCoefficient3EqnModifiedDittusBoelterMaterial.h"
+#include "SinglePhaseFluidProperties.h"
 #include "FlowModelSinglePhase.h"
-#include "Numerics.h"
 #include "WallHeatTransferModelsTHM.h"
+#include "Numerics.h"
 
-registerMooseObject("ThermalHydraulicsApp", ADWallHeatTransferCoefficient3EqnDittusBoelterMaterial);
+registerMooseObject("ThermalHydraulicsApp",
+                    ADWallHeatTransferCoefficient3EqnModifiedDittusBoelterMaterial);
 
 InputParameters
-ADWallHeatTransferCoefficient3EqnDittusBoelterMaterial::validParams()
+ADWallHeatTransferCoefficient3EqnModifiedDittusBoelterMaterial::validParams()
 {
   InputParameters params = Material::validParams();
   params.addParam<MaterialPropertyName>("Hw",
@@ -30,12 +32,13 @@ ADWallHeatTransferCoefficient3EqnDittusBoelterMaterial::validParams()
   params.addRequiredParam<MaterialPropertyName>("T", "Fluid temperature");
   params.addRequiredParam<MaterialPropertyName>("T_wall", "Wall temperature");
   params.addClassDescription(
-      "Computes wall heat transfer coefficient using Dittus-Boelter equation");
+      "Computes wall heat transfer coefficient using modified Dittus-Boelter equation");
   return params;
 }
 
-ADWallHeatTransferCoefficient3EqnDittusBoelterMaterial::
-    ADWallHeatTransferCoefficient3EqnDittusBoelterMaterial(const InputParameters & parameters)
+ADWallHeatTransferCoefficient3EqnModifiedDittusBoelterMaterial::
+    ADWallHeatTransferCoefficient3EqnModifiedDittusBoelterMaterial(
+        const InputParameters & parameters)
   : Material(parameters),
     _Hw(declareADProperty<Real>("Hw")),
     _rho(getADMaterialProperty<Real>("rho")),
@@ -50,7 +53,7 @@ ADWallHeatTransferCoefficient3EqnDittusBoelterMaterial::
 }
 
 void
-ADWallHeatTransferCoefficient3EqnDittusBoelterMaterial::computeQpProperties()
+ADWallHeatTransferCoefficient3EqnModifiedDittusBoelterMaterial::computeQpProperties()
 {
   ADReal Pr = THM::Prandtl(_cp[_qp], _mu[_qp], _k[_qp]);
   ADReal Re = std::max(1.0, THM::Reynolds(1., _rho[_qp], _vel[_qp], _D_h[_qp], _mu[_qp]));
