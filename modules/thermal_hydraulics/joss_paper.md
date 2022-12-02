@@ -42,11 +42,10 @@ THM and gives a basic demonstration of its capability.
 The `Components` system allows users to add "component"s, which are very flexible
 in their use, but in general represent "pieces" of a simulation, which may couple
 together. Common uses for components include adding meshes (1D, 2D, or 3D), variables,
-physics (or other equations), and output. Components provide a higher level syntax that
+equations, and output. Components provide a higher level syntax that
 hides lower level MOOSE objects such as `Kernel`s, `BoundaryCondition`s, etc. While
 `Action`s can also be used to create a higher level syntax, components provide much more
-capability, due to the ability to interact between components. Also, components make
-a particular setup much easier than required using actions.
+convenience, particularly when multiple components interact.
 
 Usually components represent some physical component in a system
 such as a 1D pipe, a 2D wall/structure, or a 0D junction; however, they can also be abstract,
@@ -112,7 +111,7 @@ may declare new control data that is not associated with input parameters and
 may retrieve control data declared in other control logic objects, allowing
 control operations to be chained together, which is not possible in the standard
 `Controls` system. This is necessary to mirror real control systems in thermal
-hydraulic systems, which may have complex networks of controllers.
+hydraulic systems, which may feature controllers in series.
 
 Examples of controls in THM's library include a function control, PID control,
 delay control, trip control, and terminate control.
