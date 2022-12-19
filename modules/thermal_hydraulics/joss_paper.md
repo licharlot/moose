@@ -28,29 +28,63 @@ Module (THM) is an optional MOOSE module that provides capabilities designed for
 thermal hydraulic systems. Its core capability lies in assembling a network of
 coupled components, for instance, pipes, junctions, valves, etc.
 
-THM is used as the foundation for the applications RELAP-7 [@relap7theory] and
+THM is used as the foundation for several applications, including RELAP-7 [@relap7theory] and
 Sockeye [@hansel2021sockeye], both developed at Idaho National Laboratory, which
 respectively simulate two-phase flow components and heat pipes.
+
+This paper briefly describes some of THM's systems and functionality of
+THM and gives a basic demonstration of its capability.
 
 # Capabilities
 
 ## Components System
 
-The `Components` system allows users to add "component"s to their
-simulation, which in general may perform several tasks:
-
-- Build meshes (1D, 2D, or 3D)
-- Add MOOSE variables
-- Add MOOSE objects
+The `Components` system allows users to add "component"s, which are very flexible
+in their use, but in general represent "pieces" of a simulation, which may couple
+together. Common uses for components include adding meshes (1D, 2D, or 3D), variables,
+equations, and output. Components provide a higher level syntax that
+hides lower level MOOSE objects such as `Kernel`s, `BoundaryCondition`s, etc. While
+`Action`s can also be used to create a higher level syntax, components provide much more
+convenience, particularly when multiple components interact.
 
 Usually components represent some physical component in a system
 such as a 1D pipe, a 2D wall/structure, or a 0D junction; however, they can also be abstract,
-for example, coupling other components together or providing some
-source or boundary conditions.
+for example, coupling other components together, providing some
+source or boundary conditions, or just adding any other MOOSE objects
+in a convenient manner.
+
+While the `Components` system itself is abstract, the library of existing
+components in THM is geared toward thermal hydraulics, and specifically
+contains 1D and 0D components using a single-phase, compressible flow model.
+Additionally, there are components for modeling heat conduction in 2D and
+3D, as well as some miscellaneous 0D components.
 
 ### Heat Conduction Components
 
+Heat conduction is an important physical domain that is relevant to numerous
+applications. The transient heat conduction equation is given as
 
+\begin{equation}
+  \rho c_p \frac{\partial T}{\partial t} - \nabla \cdot (k \nabla T) = q''' \,,
+\end{equation}
+
+where $\rho$ is density, $c_p$ is the specific heat capacity, $T$ is temperature,
+$k$ is thermal conductivity, and $q'''$ is a heat source term. THM provides "heat structure"
+components that solve this equation in 2D (Cartesian or cylindrical) or 3D,
+using the lower level objects provided by MOOSE's heat conduction module.
+
+Additional components provide boundary conditions for a variety of conditions,
+inluding convection, radiation, heat flux function (Neumann), and temperature (Dirichlet).
+Components are also available for convenient coupling to 1D flow channel
+components via a convective heat exchange:
+
+\begin{equation}
+  q = \mathcal{H} (T_f - T) \,,
+\end{equation}
+
+where $q$ is the heat flux to the heat structure side (the opposite applied to
+the flow channel side), $\mathcal{H}$ is the heat transfer coefficient, and
+$T_f$ is the fluid temperature.
 
 ### Single-Phase Flow Components
 
@@ -77,7 +111,7 @@ may declare new control data that is not associated with input parameters and
 may retrieve control data declared in other control logic objects, allowing
 control operations to be chained together, which is not possible in the standard
 `Controls` system. This is necessary to mirror real control systems in thermal
-hydraulic systems, which may have many controls in series.
+hydraulic systems, which may feature controllers in series.
 
 Examples of controls in THM's library include a function control, PID control,
 delay control, trip control, and terminate control.
@@ -116,17 +150,13 @@ the multitude of lower level MOOSE objects. The `ControlLogic` system extends
 the usability of MOOSE's `Controls` system, allowing control units to be
 chained together.
 
-Currently, when components are used, it is not possible to create meshes outside
-of the component system, which prevents having THM and non-THM physics in the
-same simulation. Usually THM-based applications are loosely or tightly coupled
-to other applications through MOOSE's multi-app system, but there are cases
-where a full coupling is advantageous and/or more convenient. Future work to THM
-is planned to address this inability by building component meshes via MOOSE's
-"mesh generators", which provide the ability to chain together multiple
-mesh operations to compose a mesh. Additional future work to THM may include
+Future work to THM may include
 improvement of existing components, as well as additional components related to
 single-phase flow and heat conduction. Depending on future needs, additional
-flow models may be added as well.
+flow models may be added as well. Additionally, work is planned to integrate
+THM with MOOSE's Navier-Stokes (NS) module, bringing existing flow models and methods
+from THM into the NS module, and allowing components to use alternative
+flow models and methods implemented in the NS module.
 
 # Acknowledgements
 
