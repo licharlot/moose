@@ -16,7 +16,7 @@ authors:
 affiliations:
   - name: Idaho National Laboratory
     index: 1
-date: 4 October 2022
+date: 13 June 2023
 bibliography: joss_paper.bib
 ---
 
