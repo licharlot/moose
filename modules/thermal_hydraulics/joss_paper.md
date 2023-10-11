@@ -13,10 +13,13 @@ authors:
   - name: Lise Charlot
     orcid: 0000-0002-6343-6990
     affiliation: 1
+  - name: Guillaume Giudicelli
+    orcid: 0000-0001-9714-4382
+    affiliation: 1
 affiliations:
   - name: Idaho National Laboratory
     index: 1
-date: 13 June 2023
+date: 11 October 2023
 bibliography: joss_paper.bib
 ---
 
@@ -59,6 +62,18 @@ contains 1D and 0D components using a single-phase, compressible flow model.
 Additionally, there are components for modeling heat conduction in 2D and
 3D, as well as some miscellaneous 0D components.
 
+The remainder of this section will give an overview of the currently available components.
+
+### Mesh Components
+
+(Josh/Guillaume: describe mesh base classes)
+
+#### 1D Generated Mesh Components
+
+#### 2D Generated Mesh Components
+
+#### File Mesh Components
+
 ### Heat Conduction Components
 
 Heat conduction is an important physical domain that is relevant to numerous
@@ -86,10 +101,19 @@ where $q$ is the heat flux to the heat structure side (the opposite applied to
 the flow channel side), $\mathcal{H}$ is the heat transfer coefficient, and
 $T_f$ is the fluid temperature.
 
-### Single-Phase Flow Components
+### 1D, Single-Phase, Variable-Area Flow Components
 
-THM's current library is geared toward single-phase, variable-area,
-compressible flows.
+THM's current library is geared toward 1D, single-phase, variable-area,
+compressible flows. Classes associated with this flow model typically carry
+the suffix `1Phase`.
+
+(Josh: give overview of PDEs, discretization)
+
+(Josh: describe other components)
+
+### Navier-Stokes Flow Components
+
+(Josh)
 
 ## Closures System
 
@@ -138,6 +162,8 @@ decreasing the number of input file iterations.
 
 # Demonstration
 
+(Lise: tutorial demonstration here)
+
 # Conclusions
 
 (paragraph about THM providing thermal hydraulics capabilities)
@@ -158,7 +184,16 @@ THM with MOOSE's Navier-Stokes (NS) module, bringing existing flow models and me
 from THM into the NS module, and allowing components to use alternative
 flow models and methods implemented in the NS module.
 
+(Guillaume: general plans for new syntax(es), capabilities if they are pretty certain)
+
 # Acknowledgements
 
+(add https://www.elsevier.com/authors/policies-and-guidelines/credit-author-statement)
+
+NEAMS
+
+contributors, particularly Jack, Thomas, Luiz
+
+Rich
 
 # References
