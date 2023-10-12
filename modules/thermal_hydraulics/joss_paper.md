@@ -203,13 +203,18 @@ is also run encapsulated in Valgrind to detect memory leaks. Every pull request 
 must include tests to cover any new features. This is ensured by the reviewer. The review process is detailed
 in INL's Software Quality Assurance plan [@sqa].
 
-Unit tests in THM are targetted at specific routines that can be accessed by creating the relevant object with
+Unit tests in THM are targeted at specific routines that can be accessed by creating the relevant object with
 example parameters. For example, creating a `Flux` object, we can check that the formulation of the numerical
 flux, whether with a centered scheme or with HLLC, are both consistent and symmetric.
 
-!equat
-regression test
+Regression tests are essentially created for each object to ensure that their output does not vary on a
+relevant test case. For example, each function or each auxiliary kernel is tested on a simple Cartesian mesh to make sure
+the field it produces is consistently the same. Components are often tested in the minimal configuration sufficient
+to satisfy the test requirement, to prove conservation of mass and momentum for example for a flow channel.
 
+Finally, the test suite includes numerous Jacobian tests to prove the correctness of the implementation of the
+components with regards to computing the Jacobian of the nonlinear system. This implementation has historically
+been difficult, but exact numerical Jacobians are now computed in THM using automatic differentiation [@lindsay2021automatic].
 
 # Demonstration
 
