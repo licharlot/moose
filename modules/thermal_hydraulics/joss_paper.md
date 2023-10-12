@@ -29,21 +29,26 @@ bibliography: joss_paper.bib
 
 # Summary
 
-The Multiphysics Object-Oriented Simulation Environment (MOOSE) is an object-oriented
+The Multiphysics Object-Oriented Simulation Environment (MOOSE) is an open-source object-oriented
 finite element framework written in C++ [@lindsay2022moose]. The Thermal Hydraulics
-Module (THM) is an optional MOOSE module that provides capabilities designed for
-thermal hydraulic systems. Its core capability lies in assembling a network of
-coupled components, for instance, pipes, junctions, valves, etc.
+Module (THM) is an optional MOOSE physics module that provides capabilities for
+studying thermal hydraulic systems. Its core capability lies in assembling a network of
+coupled components, for instance, pipes, junctions, valves, etc. It can then discretize
+single-phase compressible flow equations to model these components.
 
 (Josh: expand)
 
 # Statement of need
 
 THM is used as the foundation for several applications, including RELAP-7 [@relap7theory] and
-Sockeye [@hansel2021sockeye], both developed at Idaho National Laboratory, which
-respectively simulate two-phase flow components and heat pipes.
+Sockeye [@hansel2021sockeye], both developed at Idaho National Laboratory. RELAP-7 serves to model
+two-phase flow in light water nuclear reactors, coolant flow in gas-cooled reactors. Sockeye
+is used to model heat pipes, mainly for cooling purposes of nuclear micro-reactors. The components
+developed in those applications are compatible with the components in THM, and vice-versa.
 
-(Josh: expand)
+This paper briefly describes the software design principles guiding the development of the module,
+some of THM's systems, including its core components and functionalities, and gives a basic
+demonstration of its capabilities.
 
 # Core capabilities
 
