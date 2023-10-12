@@ -232,12 +232,16 @@ the multitude of lower level MOOSE objects. The `ControlLogic` system extends
 the usability of MOOSE's `Controls` system, allowing control units to be
 chained together.
 
+The development of the module is driven by user application needs.
 Future work to THM may include
 improvement of existing components, as well as additional components related to
 single-phase flow and heat conduction. Depending on future needs, additional
-flow models may be added as well.
+flow models may be added as well. Further abstraction of the way the discretization
+of an equation is created on a component is underway, and should allow for the definition
+of a general multiphysics component, able to instantiate any equation discretized in MOOSE.
 
-(Guillaume: general plans for new syntax(es), capabilities if they are pretty certain)
+External contributions to the module are encouraged and
+supported to provide compliance with INL's SQA standard.
 
 # Acknowledgements
 
