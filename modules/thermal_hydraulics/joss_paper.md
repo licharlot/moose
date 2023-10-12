@@ -33,22 +33,40 @@ The Multiphysics Object-Oriented Simulation Environment (MOOSE) is an open-sourc
 finite element framework written in C++ [@lindsay2022moose]. The Thermal Hydraulics
 Module (THM) is an optional MOOSE physics module that provides capabilities for
 studying thermal hydraulic systems. Its core capability lies in assembling a network of
-coupled components, for instance, pipes, junctions, valves, etc. It can then discretize
-single-phase compressible flow equations to model these components.
+coupled components, for instance, pipes, junctions, valves, etc.
 
-(Josh: expand)
+THM provides several new systems to MOOSE to enable and facilitate thermal
+hydraulic simulations, most notably the `Components` system, which allows provides
+a higher-level syntax to MOOSE's lower-level objects. This system is extensible
+by the user, but the current library primarily includes components based on a 1D, single-phase,
+variable-area, compressible flow model, as well as heat conduction.
 
 # Statement of need
 
-THM is used as the foundation for several applications, including RELAP-7 [@relap7theory] and
-Sockeye [@hansel2021sockeye], both developed at Idaho National Laboratory. RELAP-7 serves to model
-two-phase flow in light water nuclear reactors, coolant flow in gas-cooled reactors. Sockeye
-is used to model heat pipes, mainly for cooling purposes of nuclear micro-reactors. The components
-developed in those applications are compatible with the components in THM, and vice-versa.
+Numerous engineering applications employ fluid flow, and in particular, use systems
+of connected components to transfer heat. Power generation applications must
+provide a medium for converting power from a source to useful energy, and thermal
+hydraulic systems are well-suited for the task, due to their ability to move
+energy efficiently over long distances. These systems vary widely in their size
+and complexity and may feature a large number of components coupled together.
 
-This paper briefly describes the software design principles guiding the development of the module,
-some of THM's systems, including its core components and functionalities, and gives a basic
-demonstration of its capabilities.
+A notable example of the application of thermal hydraulic systems analysis is for
+nuclear reactor systems. These systems typically involve a large network of
+components to facilitate the conversion of the nuclear power to electrical power,
+as well as provide a number of safety systems. For example, there may be a
+primary flow "loop" of pipes that extract heat from the fuel, pumps to force
+circulation, one or more heat exchangers exchanging heat between this primary
+loop and a secondary loop, turbomachinery components like turbines and generators,
+etc. Accurate analyses of these systems require models that capture the coupling
+between all of these components.
+
+A wide variety of applications have been built using the MOOSE framework. A
+suite of applications supporting various domains of analysis of nuclear reactor systems is under
+active development at Idaho National Laboratory. THM provides a foundation for
+thermal hydraulic applications in this area, including RELAP-7 [@relap7theory],
+which models two-phase flow in light water nuclear reactors and coolant flow in
+gas-cooled reactors, and Sockeye [@hansel2021sockeye], which models heat pipes
+used in nuclear microreactors.
 
 # Core capabilities
 
@@ -68,35 +86,65 @@ for example, coupling other components together, providing some
 source or boundary conditions, or just adding any other MOOSE objects
 in a convenient manner.
 
-While the `Components` system itself is abstract, the library of existing
-components in THM is geared toward thermal hydraulics, and specifically
-contains 1D and 0D components using a single-phase, compressible flow model.
-Additionally, there are components for modeling heat conduction in 2D and
-3D, as well as some miscellaneous 0D components.
+The `Components` system is abstract and provides several base classes that could
+be utilized by a variety of physical applications. All components share the
+base class `Component`; some intermediate base classes are the following:
 
-All components derive from the class `Component`
+- `Component1D`: generates a 1D mesh in 3D space, defined by a starting point,
+  direction, length, and discretization.
+- `Component2D`: generates a 2D mesh in 3D space, defined by the same axial
+  parameters as `Component1D`, plus transverse direction, length, and discretization.
+  This may represent either a Cartesian or axisymmetric coordinate system.
+- `FileMeshComponent`: generates a mesh copied from a file (generally 3D).
+- `Component1DBoundary`: used for applying boundary conditions to a `Component1D` component.
+- `Component1DJunction`: used for applying coupled boundary conditions between `Component1D` components.
 
-- `BoundaryBase`
+The following sub-sections describe some of the currently available components.
 
-Components can be broadly organized into the following categories:
+### Flow components
 
--
-- 2D (Cartesian or cylindrical) and 3D *heat structures*, which are volumes
-  which apply the transient heat conduction equation,
+THM has numerous components that support a 1D, variable-area, single-phase
+compressible flow model [@relap7theory].
+Components related to this flow model use the suffix `1Phase`, the main component
+being the straight-channel component called `FlowChannel1Phase`. Other components
+related to this flow model are summarized as follows:
 
-  \begin{equation}
-    \rho c_p \frac{\partial T}{\partial t} - \nabla \cdot (k \nabla T) = q''' \,,
-  \end{equation}
+- boundary conditions, such as inlets/outlets (with various formulations) and walls.
+- junctions, which allow flow to occurs between multiple flow channels by providing
+  coupled boundary conditions to each connected channel. These also include valves,
+  which can partially or completely close flow paths.
+- volumetric heat sources, such as heat from a provided function, a convection
+  condition, or a coupled heat flux.
+- volumetric form loss sources, such as those arising from flow blockages.
+- turbomachinery components, such as pumps, compressors, and turbines,
+  which are particular types of junction that add source terms to the momentum
+  and energy equations to simulate turbomachinery.
 
-  where $\rho$ is density, $c_p$ is the specific heat capacity, $T$ is temperature,
-  $k$ is thermal conductivity, and $q'''$ is a heat source term.
-- heat structure boundary conditions like convection, radiation, and a provided heat flux function,
--
+In addition to these components, there is also `FlowComponentNS`, which leverages
+a selection of flow formulations from MOOSE's Navier-Stokes module [@lindsay2023moose],
+with a mesh provided by a file.
 
-Heat conduction is an important physical domain that is relevant to numerous
-applications. The transient heat conduction equation is given as
+### Heat conduction components
 
-(Josh: finish this section)
+Thermal hydraulic systems feature not only flow components but also solid bodies
+that transfer heat with the flow, such as the walls of a heat exchanger. In THM,
+these bodies are 2D or 3D components referred to as "heat structures", which
+solve the transient heat conduction equation:
+
+- `HeatStructurePlate`: based from `Component2D` and using a Cartesian coordinate system,
+  representing a "plate" geometry.
+- `HeatStructureCylindrical`: based from `Component2D` and using an axisymmetric coordinate system,
+  representing a "cylinder" or "shell" geometry.
+- `HeatStructureFromFile3D`: based from `FileMeshComponent`, representing a general 3D geometry.
+
+In addition to the heat structure components themselves, there are components that
+interact with them:
+
+- boundary conditions, such as Dirichlet, provided heat flux function, convection,
+  and radiation.
+- volumetric heat sources.
+- interface conditions, which couple heat structures to other heat structures or
+  to flow channels.
 
 ## `Closures` system
 
@@ -153,8 +201,8 @@ decreasing the number of input file iterations.
 
 # Conclusions
 
-(Josh: paragraph about THM providing thermal hydraulics capabilities)
-
+THM provides a flexible framework for thermal hydraulic systems simulations
+performed using the MOOSE framework.
 THM also provides many useful capabilities to the MOOSE framework that extend beyond
 the field of thermal hydraulics. The `Components` system provides an ideal structure
 for setting up large systems of connected components in MOOSE, significantly
@@ -166,10 +214,7 @@ chained together.
 Future work to THM may include
 improvement of existing components, as well as additional components related to
 single-phase flow and heat conduction. Depending on future needs, additional
-flow models may be added as well. Additionally, work is planned to integrate
-THM with MOOSE's Navier-Stokes (NS) module, bringing existing flow models and methods
-from THM into the NS module, and allowing components to use alternative
-flow models and methods implemented in the NS module.
+flow models may be added as well.
 
 (Guillaume: general plans for new syntax(es), capabilities if they are pretty certain)
 
