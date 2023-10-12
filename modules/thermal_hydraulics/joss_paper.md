@@ -3,6 +3,8 @@ title: 'The MOOSE Thermal Hydraulics Module'
 tags:
   - C++
   - multiphysics
+  - system analysis
+  - thermal hydraulics
 authors:
   - name: Joshua Hansel
     orcid: 0000-0001-6782-5275
