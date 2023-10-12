@@ -193,7 +193,23 @@ decreasing the number of input file iterations.
 
 # Testing
 
-(Guillaume)
+The module relies on CIVET [@slaughter2021continuous] for continuous integration.
+Every pull request to the module runs the entire test suite for MOOSE, including the tests for THM.
+The test suite is comprehensive and aims to cover every feature available in the module. It
+consists of unit and regression tests, described below. The entire test suite is run with a wide variety of
+configurations, from compiling with the oldest and newest supported compilers, to running with several
+shared memory threads and distributed memory processes, on a variety of operating systems. The test suite
+is also run encapsulated in Valgrind to detect memory leaks. Every pull request to the module
+must include tests to cover any new features. This is ensured by the reviewer. The review process is detailed
+in INL's Software Quality Assurance plan [@sqa].
+
+Unit tests in THM are targetted at specific routines that can be accessed by creating the relevant object with
+example parameters. For example, creating a `Flux` object, we can check that the formulation of the numerical
+flux, whether with a centered scheme or with HLLC, are both consistent and symmetric.
+
+!equat
+regression test
+
 
 # Demonstration
 
