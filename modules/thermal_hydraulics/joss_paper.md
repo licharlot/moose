@@ -189,7 +189,19 @@ decreasing the number of input file iterations.
 
 # Documentation
 
-(Guillaume: refer to website)
+THM is extensively documented following the same object-oriented paradigm as the code base. Each
+object is accompanied by a documentation page that describes it, including its equations or a
+figure as relevant, that lists its parameters along with metadata about the parameters, that lists
+all the input files in the repository that use this object, and finally all the classes deriving from this object.
+
+Major groups of objects, usually derived from a single base class, are documented through the syntax documentation.
+Syntax documentation describes how to add a class of object to a simulation, and describes the common characteristics
+of this class of objects. Components and Closures are examples of a unique syntax in THM that also corresponds to
+base classes of groups of THM objects.
+
+This documentation page is hosted on the module website [@thm_website]. The website also notably hosts the software
+quality assurance (SQA) records, such as the testing requirement matrix or the failure analysis reports for example.
+The interested reader is referred to INL's SQA plan [@sqa] for more information.
 
 # Testing
 
@@ -201,7 +213,7 @@ configurations, from compiling with the oldest and newest supported compilers, t
 shared memory threads and distributed memory processes, on a variety of operating systems. The test suite
 is also run encapsulated in Valgrind to detect memory leaks. Every pull request to the module
 must include tests to cover any new features. This is ensured by the reviewer. The review process is detailed
-in INL's Software Quality Assurance plan [@sqa].
+in INL's SQA plan [@sqa].
 
 Unit tests in THM are targeted at specific routines that can be accessed by creating the relevant object with
 example parameters. For example, creating a `Flux` object, we can check that the formulation of the numerical
