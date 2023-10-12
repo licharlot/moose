@@ -9,7 +9,7 @@ authors:
     affiliation: 1
   - name: David Andrs
     orcid: 0000-0002-8913-902X
-    affiliation: 1
+    affiliation: 2
   - name: Lise Charlot
     orcid: 0000-0002-6343-6990
     affiliation: 1
@@ -19,11 +19,13 @@ authors:
 affiliations:
   - name: Idaho National Laboratory
     index: 1
+  - name: Sawtooth Simulation
+    index: 2
 date: 11 October 2023
 bibliography: joss_paper.bib
 ---
 
-# Introduction
+# Summary
 
 The Multiphysics Object-Oriented Simulation Environment (MOOSE) is an object-oriented
 finite element framework written in C++ [@lindsay2022moose]. The Thermal Hydraulics
@@ -31,18 +33,21 @@ Module (THM) is an optional MOOSE module that provides capabilities designed for
 thermal hydraulic systems. Its core capability lies in assembling a network of
 coupled components, for instance, pipes, junctions, valves, etc.
 
+(Josh: expand)
+
+# Statement of need
+
 THM is used as the foundation for several applications, including RELAP-7 [@relap7theory] and
 Sockeye [@hansel2021sockeye], both developed at Idaho National Laboratory, which
 respectively simulate two-phase flow components and heat pipes.
 
-This paper briefly describes some of THM's systems and functionality of
-THM and gives a basic demonstration of its capability.
+(Josh: expand)
 
-# Capabilities
+# Core capabilities
 
-## Components System
+## `Components` system
 
-The `Components` system allows users to add "component"s, which are very flexible
+The `Components` system allows users to add "components", which are very flexible
 in their use, but in general represent "pieces" of a simulation, which may couple
 together. Common uses for components include adding meshes (1D, 2D, or 3D), variables,
 equations, and output. Components provide a higher level syntax that
@@ -62,60 +67,31 @@ contains 1D and 0D components using a single-phase, compressible flow model.
 Additionally, there are components for modeling heat conduction in 2D and
 3D, as well as some miscellaneous 0D components.
 
-The remainder of this section will give an overview of the currently available components.
+All components derive from the class `Component`
 
-### Mesh Components
+- `BoundaryBase`
 
-(Josh/Guillaume: describe mesh base classes)
+Components can be broadly organized into the following categories:
 
-#### 1D Generated Mesh Components
+-
+- 2D (Cartesian or cylindrical) and 3D *heat structures*, which are volumes
+  which apply the transient heat conduction equation,
 
-#### 2D Generated Mesh Components
+  \begin{equation}
+    \rho c_p \frac{\partial T}{\partial t} - \nabla \cdot (k \nabla T) = q''' \,,
+  \end{equation}
 
-#### File Mesh Components
-
-### Heat Conduction Components
+  where $\rho$ is density, $c_p$ is the specific heat capacity, $T$ is temperature,
+  $k$ is thermal conductivity, and $q'''$ is a heat source term.
+- heat structure boundary conditions like convection, radiation, and a provided heat flux function,
+-
 
 Heat conduction is an important physical domain that is relevant to numerous
 applications. The transient heat conduction equation is given as
 
-\begin{equation}
-  \rho c_p \frac{\partial T}{\partial t} - \nabla \cdot (k \nabla T) = q''' \,,
-\end{equation}
+(Josh: finish this section)
 
-where $\rho$ is density, $c_p$ is the specific heat capacity, $T$ is temperature,
-$k$ is thermal conductivity, and $q'''$ is a heat source term. THM provides "heat structure"
-components that solve this equation in 2D (Cartesian or cylindrical) or 3D,
-using the lower level objects provided by MOOSE's heat conduction module.
-
-Additional components provide boundary conditions for a variety of conditions,
-inluding convection, radiation, heat flux function (Neumann), and temperature (Dirichlet).
-Components are also available for convenient coupling to 1D flow channel
-components via a convective heat exchange:
-
-\begin{equation}
-  q = \mathcal{H} (T_f - T) \,,
-\end{equation}
-
-where $q$ is the heat flux to the heat structure side (the opposite applied to
-the flow channel side), $\mathcal{H}$ is the heat transfer coefficient, and
-$T_f$ is the fluid temperature.
-
-### 1D, Single-Phase, Variable-Area Flow Components
-
-THM's current library is geared toward 1D, single-phase, variable-area,
-compressible flows. Classes associated with this flow model typically carry
-the suffix `1Phase`.
-
-(Josh: give overview of PDEs, discretization)
-
-(Josh: describe other components)
-
-### Navier-Stokes Flow Components
-
-(Josh)
-
-## Closures System
+## `Closures` system
 
 The `Closures` system allows users to create MOOSE objects (usually `Material`s)
 that specify closures for their component models. For example, a flow channel
@@ -126,7 +102,7 @@ closures choices, each with their own user parameters. In large systems of
 components, `Closures` objects can be re-used when the closures apply to many
 objects.
 
-## Control Logic System
+## `ControlLogic` system
 
 The `ControlLogic` system is an extension of MOOSE's `Controls`
 system, which is used to control input parameters to various objects during
@@ -135,17 +111,13 @@ may declare new control data that is not associated with input parameters and
 may retrieve control data declared in other control logic objects, allowing
 control operations to be chained together, which is not possible in the standard
 `Controls` system. This is necessary to mirror real control systems in thermal
-hydraulic systems, which may feature controllers in series.
+hydraulic systems, which may feature various controllers in series.
+Examples of controls in THM's library include the following:
+a transient function control,
+a proportional-integral-derivative (PID) control,
+a delay control, a trip control, and a terminate control.
 
-Examples of controls in THM's library include a function control, PID control,
-delay control, trip control, and terminate control.
-
-Also, THM automatically brings all `Postprocessor`s into the `ControlLogic`
-system.
-
-## Integrity Checking
-
-### Error Logging
+## Integrity-checking
 
 Systems simulations can have a very large number of components, and creation of
 such large models is potentially complex and error-prone, perhaps involving
@@ -160,13 +132,21 @@ out all of the errors and warnings, in a very palatable, condensed format.
 Then the user can view and address these errors all at once, significantly
 decreasing the number of input file iterations.
 
+# Documentation
+
+(Guillaume: refer to website)
+
+# Testing
+
+(Guillaume)
+
 # Demonstration
 
-(Lise: tutorial demonstration here)
+(Lise: tutorial demonstration here, also give some example usage)
 
 # Conclusions
 
-(paragraph about THM providing thermal hydraulics capabilities)
+(Josh: paragraph about THM providing thermal hydraulics capabilities)
 
 THM also provides many useful capabilities to the MOOSE framework that extend beyond
 the field of thermal hydraulics. The `Components` system provides an ideal structure
@@ -188,12 +168,11 @@ flow models and methods implemented in the NS module.
 
 # Acknowledgements
 
-(add https://www.elsevier.com/authors/policies-and-guidelines/credit-author-statement)
+We would like to acknowledge the time and effort of THM's many contributors,
+most notably Jack Cavaluzzi, Thomas Freyman, Luiz Aldeia, and Rachel Beall.
+We would also like to thank Richard Martineau for his strong support of the project.
 
-NEAMS
-
-contributors, particularly Jack, Thomas, Luiz
-
-Rich
+This work was funded by the Department of Energy Nuclear Energy Advanced Modeling and Simulation (NEAMS) program.
+This manuscript has been authored by Battelle Energy Alliance, LLC under Contract No. DE-AC07-05ID14517 with the US Department of Energy. The United States Government retains and the publisher, by accepting the article for publication, acknowledges that the United States Government retains a nonexclusive, paid-up, irrevocable, worldwide license to publish or reproduce the published form of this manuscript, or allow others to do so, for United States Government purposes.
 
 # References
