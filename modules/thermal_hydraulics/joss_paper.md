@@ -226,8 +226,18 @@ the field it produces is consistently the same. Components are often tested in t
 to satisfy the test requirement, for example, to prove conservation of mass and energy on a flow channel.
 
 # Demonstration
+THM can be used as a foundation for other MOOSE-based applications or as a stand-alone software to model a variety of systems, including nuclear systems, power conversion cycles, geothermal piping networks.
+The flexibility of THM is demonstrated with a two loop system that is typical of a nuclear reactor system. This model is the final step of the single-phase flow THM tutorial available on the THM website [@thm_website].
 
-(Lise: tutorial demonstration here, also give some example usage)
+![System diagram (left) and temperature distribution (right) \label{fig:demo}](demo_dia_T.png)
+
+The system is shown in \autoref{fig:demo}. Helium circulates in the primary loop and extracts heat from a rod. Heat is transferred to a secondary system through a heat exchanger. The cold helium then enters a pump, before flowing in the heated section again.
+Each part of the systen shown in \autoref{fig:demo} is defined using the appropriate `Component` object.
+The `ControlLogic` system is used to set the pump head to match a target mass flow rate in the primary loop. The secondary side is a flow channel with water.
+The MOOSE Fluid Property Module is used to define the fluid properties in each loop.
+This example features 2 set of `Closures` objects. The first set is of type `Closures1PhaseTHM` and uses classic correlations for the heat transfer coefficient and friction factor; the second set is of type `Closures1PhaseNone` and allows the user to define custom relations for the closure coefficient.
+In this example, custom closures are used for the primary side of the heat exchanger, this is useful for complex geometries where experimental data can be used to set these closure coefficients. THM then calculates quantities of interest such as pressure, temperature, or mass flow rate.
+
 
 # Conclusions
 
