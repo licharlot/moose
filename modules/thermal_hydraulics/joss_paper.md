@@ -251,8 +251,8 @@ flow models may be added as well. Further abstraction of the way the discretizat
 of an equation is created on a component is underway, and should allow for the definition
 of a general multiphysics component, able to instantiate any equation discretized in MOOSE.
 
-External contributions to the module are encouraged and
-supported to provide compliance with INL's SQA standard.
+External contributions to the module are encouraged, and
+support will be provided to comply with MOOSE's SQA standard.
 
 # Acknowledgements
 
