@@ -11,7 +11,7 @@ authors:
     affiliation: 1
   - name: David Andrs
     orcid: 0000-0002-8913-902X
-    affiliation: 2
+    affiliation: 1
   - name: Lise Charlot
     orcid: 0000-0002-6343-6990
     affiliation: 1
@@ -21,8 +21,6 @@ authors:
 affiliations:
   - name: Idaho National Laboratory
     index: 1
-  - name: Sawtooth Simulation
-    index: 2
 date: 11 October 2023
 bibliography: joss_paper.bib
 ---
