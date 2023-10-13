@@ -187,11 +187,43 @@ decreasing the number of input file iterations.
 
 # Documentation
 
-(Guillaume: refer to website)
+THM's documentation is extensive and follows the same structure as the code base. Each
+object is accompanied by a documentation page that:
+
+- describes it, including its equations or a figure as relevant
+- lists its parameters along with metadata about the parameters
+- lists all the input files in the repository that use this object
+- lists all the classes deriving from this object.
+
+Major groups of objects, usually derived from a single base class, are documented through the syntax documentation,
+which describes how these objects are instantiated and used in a simulation.
+For example, `Components` and `Closures` are examples of syntax unique to THM that also correspond to
+base classes of groups of THM objects.
+
+This documentation page is hosted on the module website [@thm_website]. The website also notably hosts the software
+quality assurance (SQA) records, such as the testing requirement matrix or the failure analysis reports for example.
+The interested reader is referred to the MOOSE SQA plan [@sqa] for more information.
 
 # Testing
 
-(Guillaume)
+The module relies on CIVET [@slaughter2021continuous] for continuous integration.
+Every pull request to the module runs the entire test suite for MOOSE, including the tests for THM.
+The test suite is comprehensive and aims to cover every feature available in the module. It
+consists of unit and regression tests, described below. The entire test suite is run with a wide variety of
+configurations, from compiling with the oldest and newest supported compilers, to running with several
+shared memory threads and distributed memory processes, on a variety of operating systems. The test suite
+is also run encapsulated in Valgrind to detect memory leaks. Every pull request to the module
+must include tests to cover any new features. This is ensured by the reviewer. The review process is detailed
+in MOOSE's SQA plan [@sqa].
+
+Unit tests in THM are targeted at specific routines that can be accessed by creating the relevant object with
+example parameters. For example, creating a `Flux` object, we can check that the formulation of the numerical
+flux, whether with a centered scheme or with HLLC, are both consistent and symmetric.
+
+Regression tests are essentially created for each object to ensure that their output does not vary on a
+relevant test case. For example, each function or each auxiliary kernel is tested on a simple Cartesian mesh to make sure
+the field it produces is consistently the same. Components are often tested in the minimal configuration sufficient
+to satisfy the test requirement, for example, to prove conservation of mass and energy on a flow channel.
 
 # Demonstration
 
@@ -209,12 +241,16 @@ the multitude of lower level MOOSE objects. The `ControlLogic` system extends
 the usability of MOOSE's `Controls` system, allowing control units to be
 chained together.
 
+The development of the module is driven by user application needs.
 Future work to THM may include
 improvement of existing components, as well as additional components related to
 single-phase flow and heat conduction. Depending on future needs, additional
-flow models may be added as well.
+flow models may be added as well. Further abstraction of the way the discretization
+of an equation is created on a component is underway, and should allow for the definition
+of a general multiphysics component, able to instantiate any equation discretized in MOOSE.
 
-(Guillaume: general plans for new syntax(es), capabilities if they are pretty certain)
+External contributions to the module are encouraged, and
+support will be provided to comply with MOOSE's SQA standard.
 
 # Acknowledgements
 
